@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content_title %}{{ entry.title }}{% endblock %}
+{% block sidebar_extra %}
+
+        <div class="list-group">
+            <div class="list-group-item active">Tags</div>
+            {% for tag in entry.tags %}
+                <a href="{{ url_for('entries.tag_detail',slug=tag.slug) }}" class="list-group-item">{{ tag.name }}</a>
+            {% endfor %}
+        </div>
+
+{% endblock %}
+{% block content %}<p><span class="glyphicon glyphicon-time" aria-hidden="true"></span> {{ entry.created_timestamp.strftime('%m/%d/%Y') }}</p>
+    <hr/>
+    {{ entry.body }}
+{% endblock %}

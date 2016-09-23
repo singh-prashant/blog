@@ -68,8 +68,8 @@ def edit(slug):
             db.session.add(entry)
             db.session.commit()
             return redirect(url_for('entries.detail', slug=entry.slug))
-        else:
-            form = EntryForm(obj=entry)
+    else:
+        form = EntryForm(obj=entry)
 
     return render_template('entries/edit.html', entry=entry, form=form)
 

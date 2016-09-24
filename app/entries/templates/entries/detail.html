@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% block content_title %}{{ entry.title }}{% endblock %}
+{% block content_title %}{{ entry.title }}<a class="btn" href="{{ url_for('entries.edit',slug=entry.slug) }}">Edit</a>
+            <a class="btn btn-danger" href="{{ url_for('entries.delete',slug=entry.slug) }}">Delete</a>{% endblock %}
 {% block sidebar_extra %}
 
         <div class="list-group">
@@ -7,7 +8,6 @@
             {% for tag in entry.tags %}
                 <a href="{{ url_for('entries.tag_detail',slug=tag.slug) }}" class="list-group-item">{{ tag.name }}</a>
             {% endfor %}
-            <a class="list-group-item" href="{{ url_for('entries.edit',slug=entry.slug) }}">Edit</a>
         </div>
 
 {% endblock %}

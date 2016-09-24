@@ -18,6 +18,7 @@ entry_category = db.Table('entry_category',
 class Entry(db.Model):
     STATUS_PUBLIC = 0
     STATUS_DRAFT = 1
+    STATUS_DELETED = 2
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(256))
     slug = db.Column(db.String(256), unique=True)

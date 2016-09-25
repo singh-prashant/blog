@@ -76,7 +76,7 @@
                     </ul>
                 </li>
                 {% if g.user.is_authenticated %}
-                    <li><a href="{{ url_for('logout', next=request.path) }}">{{ g.user.id }}</a></li>
+                    <li><a href="{{ url_for('logout', next=request.path) }}">{{ g.user.email }}</a></li>
                     <li><a href="{{ url_for('logout', next=request.path) }}">Logout</a></li>
                 {% else %}
                     <li><a href="{{ url_for('login', next=request.path) }}">Login</a></li>

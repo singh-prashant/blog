@@ -14,7 +14,7 @@
         </div>
 
 {% endblock %}
-{% block content %}<p><span class="glyphicon glyphicon-time" aria-hidden="true"></span> {{ entry.created_timestamp.strftime('%m/%d/%Y') }}By {{ entry.author_id }}</p>
+{% block content %}<p><span class="glyphicon glyphicon-time" aria-hidden="true"></span> {{ entry.created_timestamp.strftime('%m/%d/%Y') }} By- {{ entry.author.email }}</p>
     <hr/>
     {{ entry.body }}
 {% endblock %}

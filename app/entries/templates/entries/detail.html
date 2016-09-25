@@ -1,6 +1,9 @@
 {% extends "base.html" %}
-{% block content_title %}{{ entry.title }}<a class="btn" href="{{ url_for('entries.edit',slug=entry.slug) }}">Edit</a>
-            <a class="btn btn-danger" href="{{ url_for('entries.delete',slug=entry.slug) }}">Delete</a>{% endblock %}
+{% block content_title %}{{ entry.title }}
+    {% if g.user== entry.author %}<a class="btn" href="{{ url_for('entries.edit',slug=entry.slug) }}">Edit</a>
+            <a class="btn btn-danger" href="{{ url_for('entries.delete',slug=entry.slug) }}">Delete</a>
+    {% endif %}
+    {% endblock %}
 {% block sidebar_extra %}
 
         <div class="list-group">
@@ -11,7 +14,7 @@
         </div>
 
 {% endblock %}
-{% block content %}<p><span class="glyphicon glyphicon-time" aria-hidden="true"></span> {{ entry.created_timestamp.strftime('%m/%d/%Y') }}</p>
+{% block content %}<p><span class="glyphicon glyphicon-time" aria-hidden="true"></span> {{ entry.created_timestamp.strftime('%m/%d/%Y') }}By {{ entry.author_id }}</p>
     <hr/>
     {{ entry.body }}
 {% endblock %}

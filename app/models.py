@@ -1,9 +1,16 @@
 import datetime, re
 
 from app import db
+from app import bcrypt, login_manager
+
+
+@login_manager.user_loader
+def _user_loader(user_id):
+    return User.query.get(int(user_id))
 
 def slugify(s):
     return re.sub('[^\w]+', '-', s).lower()
+
 
 entry_tags = db.Table('entry_tags',
                       db.Column('tag_id', db.Integer, db.ForeignKey('tag.id')),
@@ -34,6 +41,8 @@ class Entry(db.Model):
         onupdate=datetime.datetime.now
     )
 
+    author_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+
 
     tags = db.relationship('Tag', secondary = entry_tags,
                            backref=db.backref('entries', lazy='dynamic'))
@@ -61,7 +70,7 @@ class Tag(db.Model):
     name = db.Column(db.String(64))
     slug = db.Column(db.String(64), unique=True)
 
-    def __init__(self, *args,**kwargs ):
+    def __init__(self, *args, **kwargs):
         super(Tag, self).__init__(*args, **kwargs)
         self.slug = slugify(self.name)
 
@@ -73,9 +82,68 @@ class Category(db.Model):
     name = db.Column(db.String(64))
     slug = db.Column(db.String(64), unique=True)
 
-    def __init__(self, *args,**kwargs ):
+    def __init__(self, *args, **kwargs):
         super(Category, self).__init__(*args, **kwargs)
         self.slug = slugify(self.name)
 
     def __repr__(self):
-        return '<Category: %s>'% (self.name)
+        return '<Category: %s>'%( self.name )
+
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(64), unique=True)
+    password = db.Column(db.String(255))
+    name = db.Column(db.String(64))
+    slug = db.Column(db.String(64), unique=True)
+    active = db.Column(db.Boolean, default=False)
+    created_timestamp = db.Column(db.DateTime, default=datetime.datetime.now)
+    last_seen = db.Column(db.DateTime,
+                          default=datetime.datetime.now,
+                          onupdate=datetime.datetime.now
+    )
+
+    entries = db.relationship('Entry', backref='author', lazy='dynamic')
+
+    def __init__(self, *args, **kwargs):
+        super(User, self).__init__(*args, **kwargs)
+        self.generate_slug()
+
+    def generate_slug(self):
+        self.slug = slugify(self.name)
+
+    def get_id(self):
+        return unicode(self.id)
+
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return self.active
+
+    def is_anonymous(self):
+        return False
+
+    @staticmethod
+    def make_password(plaintext):
+        return bcrypt.generate_password_hash(plaintext)
+
+
+    def check_password(self, raw_password):
+        return bcrypt.check_password_hash(self.password, raw_password)
+
+    @classmethod
+    def create(cls, email, password, **kwargs):
+        return User(
+            email=email,
+            password = User.make_password(password),
+            **kwargs
+        )
+
+    @staticmethod
+    def authenticate(email, password):
+        user = User.query.filter(User.email==email).first()
+        if user and user.check_password(password):
+            return user
+        return False
+

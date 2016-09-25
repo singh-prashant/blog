@@ -2,16 +2,18 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/readable/bootstrap.min.css" rel="stylesheet" integrity="sha384-Li5uVfY2bSkD3WQyiHX8tJd0aMF91rMrQP5aAewFkHkVSTT2TmD2PehZeMmm7aiL" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/readable/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Li5uVfY2bSkD3WQyiHX8tJd0aMF91rMrQP5aAewFkHkVSTT2TmD2PehZeMmm7aiL" crossorigin="anonymous">
     {% if title %}
         <title>{{ title }} | Bankopedia</title>
     {% else %}
         <title>Welcome to Bankopedia</title>
     {% endif %}
     <style type="text/css">
-        .container, .sidebar{
+        .container, .sidebar {
             padding-top: 60px;
         }
+
         html {
             position: relative;
             min-height: 100%;
@@ -22,6 +24,9 @@
             margin-bottom: 60px;
         }
 
+        #body{
+            height: 40em;
+        }
         .footer {
             position: absolute;
             bottom: 0;
@@ -35,71 +40,85 @@
             min-height: 100%;
         }
     </style>
- {{ moment.include_moment() }}
-{% block extra_styles %}{% endblock %}
+    {{ moment.include_moment() }}
+    {% block extra_styles %}{% endblock %}
 </head>
 
 <nav class="navbar navbar-inverse navbar-fixed-top">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="{{ url_for('homepage')}}">Bankopedia</a>
-    </div>
-
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="{{ url_for('entries.index') }}">Economy <span class="sr-only">(current)</span></a></li>
-        <li><a href="/banking-awareness">Banking Awareness</a></li>
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Deposits <span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="#">Saving Account</a></li>
-            <li><a href="#">Fixed Deposit</a></li>
-            <li><a href="#">Current Account</a></li>
-            <li class="divider"></li>
-            <li><a href="#">Cash Credit</a></li>
-            <li class="divider"></li>
-            <li><a href="#">Other Loans</a></li>
-          </ul>
-        </li>
-      </ul>
-      <form class="navbar-form navbar-right" role="search">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-2">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{{ url_for('homepage') }}">Bankopedia</a>
         </div>
-        <button type="submit" class="btn btn-default">Submit</button>
-      </form>
-    </div>
 
-  </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="{{ url_for('entries.index') }}">Economy <span
+                        class="sr-only">(current)</span></a></li>
+                <li><a href="/banking-awareness">Banking Awareness</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Deposits
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#">Saving Account</a></li>
+                        <li><a href="#">Fixed Deposit</a></li>
+                        <li><a href="#">Current Account</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">Cash Credit</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">Other Loans</a></li>
+                    </ul>
+                </li>
+                {% if g.user.is_authenticated %}
+                    <li><a href="{{ url_for('logout', next=request.path) }}">{{ g.user.id }}</a></li>
+                    <li><a href="{{ url_for('logout', next=request.path) }}">Logout</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('login', next=request.path) }}">Login</a></li>
+
+                {% endif %}
+            </ul>
+
+
+            <form class="navbar-form navbar-right" role="search">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Search">
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+
+
+        </div>
+
+    </div>
 </nav>
 
 <div class="container">
     <div class="row">
         <div class="col-md-9 col-lg-9">
             <h1>{% block content_title %}{% endblock %}</h1>
-        {% for category, message in get_flashed_messages(with_categories=true) %}
-            <div class="alert alert-dismissible alert-{{ category }}">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                {{ message }}
-            </div>
-        {% endfor %}
+            {% for category, message in get_flashed_messages(with_categories=true) %}
+                <div class="alert alert-dismissible alert-{{ category }}">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ message }}
+                </div>
+            {% endfor %}
             {% block content %}{% endblock %}
         </div>
-    <div class="sidebar">
-        <div class="col-md-3 col-lg-3">
-            <div class="list-group">
-                {% for item in list_group_item %}
-                    <a href="{{ item['url'] }}" class="list-group-item">{{ item['title']}}</a>
-                {% endfor %}
+        <div class="sidebar">
+            <div class="col-md-3 col-lg-3">
+                <div class="list-group">
+                    {% for item in list_group_item %}
+                        <a href="{{ item['url'] }}" class="list-group-item">{{ item['title'] }}</a>
+                    {% endfor %}
+                </div>
+                {% block sidebar_extra %}{% endblock %}
             </div>
-        {% block sidebar_extra %}{% endblock %}
-        </div>
         </div>
     </div>
     <div class="row footer">
@@ -110,7 +129,9 @@
     </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
 {% block extra_scripts %}{% endblock %}
 </body>
 </html>

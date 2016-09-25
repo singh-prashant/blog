@@ -2,6 +2,7 @@ from wtforms import Form, StringField, TextAreaField,SelectField, FileField
 from wtforms.validators import DataRequired
 from models import Entry, Tag
 
+
 class TagField(StringField):
     def _value(self):
         if self.data:
@@ -57,3 +58,4 @@ class EntryForm(Form):
         self.populate_obj(entry)
         entry.generate_slug()
         return entry
+

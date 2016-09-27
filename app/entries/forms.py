@@ -1,5 +1,5 @@
-from wtforms import Form, StringField, TextAreaField,SelectField, FileField
-from wtforms.validators import DataRequired
+from wtforms import Form, StringField, TextAreaField,SelectField, FileField,HiddenField
+from wtforms.validators import DataRequired, Optional, Email, URL, Length
 from models import Entry, Tag
 
 
@@ -59,3 +59,24 @@ class EntryForm(Form):
         entry.generate_slug()
         return entry
 
+
+class CommentForm(Form):
+    name = StringField('Name',validators=[DataRequired()])
+    email = StringField('Email',validators=[DataRequired(),Email()])
+    url = StringField('Url', validators=[Optional(), URL()])
+    body = TextAreaField('Comment', validators=[DataRequired(),Length(min=10, max=3000)])
+    entry_id = HiddenField(validators=[DataRequired()])
+
+    def validate(self):
+        if not super(CommentForm, self).validate():
+            return False
+
+        entry = Entry.query.filter(
+            (Entry.status == Entry.STATUS_PUBLIC),
+            (Entry.id == self.entry_id.data)
+        ).first()
+
+        if not entry:
+            return False
+
+        return True

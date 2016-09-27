@@ -1,5 +1,6 @@
 from app import application as app
 import admin
+import api
 from app import db
 import models
 import views

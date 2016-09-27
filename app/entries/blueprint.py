@@ -3,7 +3,7 @@ from flask import redirect, url_for, flash
 from helpers import object_list
 from werkzeug import secure_filename
 from models import Entry, Tag
-from entries.forms import EntryForm, ImageForm
+from entries.forms import EntryForm, ImageForm, CommentForm
 from app import application as app
 from app import db
 from flask_login import login_required
@@ -66,8 +66,9 @@ def tag_detail(slug):
 @entries.route('/<slug>/')
 def detail(slug):
     entry = get_entry_or_404(slug)
+    form = CommentForm(data={'entry_id':entry.id})
     title = entry.title
-    return render_template('entries/detail.html', entry=entry, title=title)
+    return render_template('entries/detail.html', entry=entry, form=form, title=title)
 
 
 @entries.route('/create/',methods=['GET', 'POST'] )
